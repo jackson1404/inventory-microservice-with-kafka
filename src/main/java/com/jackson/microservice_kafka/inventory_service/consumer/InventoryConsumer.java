@@ -25,9 +25,9 @@ public class InventoryConsumer {
     private String consumerGroupId;
 
     @KafkaListener(topics = "#{__listener.inventoryCheckTopic}", groupId = "#{__listener.consumerGroupId}")
-    public void consumeInventoryCheck(ConsumerRecord<String, Map<String, Object>> record){
+    public void consumeInventoryCheck(ConsumerRecord<Long, Map<String, Object>> record){
         Map<String, Object> value = record.value();
-        String productId = record.key();
+        Long productId = record.key();
         String orderNumber = (String) value.get("orderNumber");
         int quantity = (Integer) value.get("quantity");
 
