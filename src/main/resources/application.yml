@@ -17,16 +17,9 @@ spring:
   kafka:
     boostrap-server: localhost:29092
     consumer:
-      group-id: inventory-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-app:
-  topics:
-    inventory-check: inventory-check-topic
-    inventory-updated: inventory-updated-topic
-    order-processed: order-processed-topic
