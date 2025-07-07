@@ -1,6 +1,7 @@
 package com.jackson.microservice_kafka.inventory_service.consumer;
 
 import com.jackson.microservice_kafka.inventory_service.config.AppTopicProperties;
+import com.jackson.microservice_kafka.inventory_service.dto.OrderConsumeDto;
 import com.jackson.microservice_kafka.inventory_service.service.InventoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -23,11 +24,12 @@ public class InventoryConsumer {
     private AppTopicProperties appTopicProperties;
 
     @KafkaListener(topics = "#{appTopicProperties.topics.inventoryCheck}", groupId = "#{appTopicProperties.kafka.consumerGroups.inventoryCheck}")
-    public void consumeInventoryCheck(ConsumerRecord<Long, Map<String, Object>> record){
-        Map<String, Object> value = record.value();
-        Long productId = record.key();
-        String orderNumber = (String) value.get("orderNumber");
-        int quantity = (Integer) value.get("quantity");
+    public void consumeInventoryCheck(ConsumerRecord<Long, OrderConsumeDto> record){
+
+        OrderConsumeDto orderConsumeDto = record.value();
+        String productId = orderConsumeDto.getProductId();
+        String orderNumber = orderConsumeDto.getOrderNumber();
+        int quantity = orderConsumeDto.getOrderQuantity();
 
         log.info("Received inventory check for product: {}, order: {}", productId, orderNumber);
 

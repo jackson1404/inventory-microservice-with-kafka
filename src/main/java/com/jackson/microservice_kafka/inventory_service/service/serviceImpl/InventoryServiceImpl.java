@@ -1,5 +1,6 @@
 package com.jackson.microservice_kafka.inventory_service.service.serviceImpl;
 
+import com.jackson.microservice_kafka.inventory_service.config.AppTopicProperties;
 import com.jackson.microservice_kafka.inventory_service.repository.ProductRepository;
 import com.jackson.microservice_kafka.inventory_service.service.InventoryService;
 import jakarta.transaction.Transactional;
@@ -15,22 +16,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService {
 
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     private final KafkaTemplate<Object, Object> kafkaTemplate;
 
-    @Value("${app.topics.order-processed}")
-    private String orderProcessedTopic;
+    private final AppTopicProperties appTopicProperties;
 
-    @Value("${app.topics.inventory-updated}")
-    private String inventoryUpdatedTopic;
+    private final String orderProcessedTopic = appTopicProperties.getTopics().getOrderProcessed();
+
+    private final String inventoryUpdatedTopic = appTopicProperties.getTopics().getInventoryUpdated();
 
     @Override
     @Transactional
-    public void checkAndUpdateInventory(Long productId, String orderNumber, int quantity) {
+    public void checkAndUpdateInventory(String productId, String orderNumber, int quantity) {
 
-        productRepository.findById(productId).ifPresent(product -> {
+        productRepository.findByProductId(productId).ifPresent(product -> {
             if(product.getProductQuantity() >= quantity){
                 product.setProductQuantity(product.getProductQuantity() - quantity);
                 productRepository.save(product);
