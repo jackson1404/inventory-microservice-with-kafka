@@ -38,6 +38,10 @@ public class InventoryCheckSchedular {
 
         List<ProductEntity> productEntities = productRepository.findLowStockItems();
 
+        for(ProductEntity productEntity : productEntities){
+
+        }
+
     }
 
 
