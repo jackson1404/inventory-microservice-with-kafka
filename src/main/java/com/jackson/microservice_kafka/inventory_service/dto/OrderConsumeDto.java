@@ -1,13 +1,16 @@
 package com.jackson.microservice_kafka.inventory_service.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderConsumeDto {
 
-    private String productId;
+    private Long productId;
     private String orderNumber;
     private int orderQuantity;
 

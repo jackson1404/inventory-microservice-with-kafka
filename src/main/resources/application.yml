@@ -16,6 +16,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
     boostrap-server: localhost:29092
+    properties:
+      spring.json.trusted.packages: "*"
     consumer:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -23,3 +25,23 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+app:
+  topics:
+    order-created: order-created-topic
+    order-processed: order-processed-topic
+    inventory-check: inventory-check-topic
+    inventory-updated: inventory-updated-topic
+  kafka:
+    consumer-groups:
+      order-created: order-created-group
+      order-processed: order-processed-group
+      inventory-check: inventory-check-group
+      inventory-updated: inventory-update-group
+      notification-order-created: notification-order-created-group
+      notification-order-processed: notification-order-processed-group
+      notification-inventory-check: notification-inventory-check-group
+
+
+server:
+  port: 8081

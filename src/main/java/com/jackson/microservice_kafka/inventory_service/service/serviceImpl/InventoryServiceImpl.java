@@ -1,9 +1,9 @@
 package com.jackson.microservice_kafka.inventory_service.service.serviceImpl;
 
-import com.jackson.microservice_kafka.inventory_service.config.AppTopicProperties;
 import com.jackson.microservice_kafka.inventory_service.repository.ProductRepository;
 import com.jackson.microservice_kafka.inventory_service.service.InventoryService;
 import jakarta.transaction.Transactional;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,21 +14,24 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Data
 public class InventoryServiceImpl implements InventoryService {
 
     private final ProductRepository productRepository;
 
     private final KafkaTemplate<Object, Object> kafkaTemplate;
 
-    private final AppTopicProperties appTopicProperties;
+//    private final AppTopicProperties appTopicProperties;
 
-    private final String orderProcessedTopic = appTopicProperties.getTopics().getOrderProcessed();
+    @Value("${app.topics.order-processed}")
+    private String orderProcessedTopic;
 
-    private final String inventoryUpdatedTopic = appTopicProperties.getTopics().getInventoryUpdated();
+    @Value("${app.topics.inventory-updated}")
+    private String inventoryUpdatedTopic;
 
     @Override
     @Transactional
-    public void checkAndUpdateInventory(String productId, String orderNumber, int quantity) {
+    public void checkAndUpdateInventory(Long productId, String orderNumber, int quantity) {
 
         productRepository.findByProductId(productId).ifPresent(product -> {
             if(product.getProductQuantity() >= quantity){

@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
-    Optional<ProductEntity> findByProductId(String productId);
+    Optional<ProductEntity> findByProductId(Long productId);
 
     @Query("SELECT p FROM ProductEntity p WHERE p.productQuantity <10")
     List<ProductEntity> findLowStockItems();
