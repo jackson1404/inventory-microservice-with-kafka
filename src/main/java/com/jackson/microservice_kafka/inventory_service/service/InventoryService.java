@@ -4,6 +4,6 @@ import jakarta.transaction.Transactional;
 
 public interface InventoryService {
 
-    void checkAndUpdateInventory(Long productId, String orderNumber, int quantity);
+    void checkAndUpdateInventory(String productId, String orderNumber, int quantity);
 
 }

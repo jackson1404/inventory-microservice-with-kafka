@@ -1,5 +1,7 @@
 package com.jackson.microservice_kafka.inventory_service.consumer;
 
+import com.jackson.microservice_kafka.inventory_service.config.AppTopicProperties;
+import com.jackson.microservice_kafka.inventory_service.dto.OrderConsumeDto;
 import com.jackson.microservice_kafka.inventory_service.service.InventoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,18 +20,16 @@ public class InventoryConsumer {
     @Autowired
     private InventoryService inventoryService;
 
-    @Value("${app.topics.inventory-check}")
-    private String inventoryCheckTopic;
+    @Autowired
+    private AppTopicProperties appTopicProperties;
 
-    @Value("${spring.kafka.consumer.group-id}")
-    private String consumerGroupId;
+    @KafkaListener(topics = "#{appTopicProperties.topics.inventoryCheck}", groupId = "#{appTopicProperties.kafka.consumerGroups.inventoryCheck}")
+    public void consumeInventoryCheck(ConsumerRecord<Long, OrderConsumeDto> record){
 
-    @KafkaListener(topics = "#{__listener.inventoryCheckTopic}", groupId = "#{__listener.consumerGroupId}")
-    public void consumeInventoryCheck(ConsumerRecord<Long, Map<String, Object>> record){
-        Map<String, Object> value = record.value();
-        Long productId = record.key();
-        String orderNumber = (String) value.get("orderNumber");
-        int quantity = (Integer) value.get("quantity");
+        OrderConsumeDto orderConsumeDto = record.value();
+        String productId = orderConsumeDto.getProductId();
+        String orderNumber = orderConsumeDto.getOrderNumber();
+        int quantity = orderConsumeDto.getOrderQuantity();
 
         log.info("Received inventory check for product: {}, order: {}", productId, orderNumber);
 
