@@ -1,5 +1,6 @@
 package com.jackson.microservice_kafka.inventory_service.service.serviceImpl;
 
+import com.jackson.microservice_kafka.inventory_service.dto.OrderProducerDto;
 import com.jackson.microservice_kafka.inventory_service.repository.ProductRepository;
 import com.jackson.microservice_kafka.inventory_service.service.InventoryService;
 import jakarta.transaction.Transactional;
@@ -38,18 +39,19 @@ public class InventoryServiceImpl implements InventoryService {
                 product.setProductQuantity(product.getProductQuantity() - quantity);
                 productRepository.save(product);
 
+                OrderProducerDto orderProducerDto = new OrderProducerDto(
+                        orderNumber,
+                        "SUCCESS",
+                        "Inventory updated successfully"
+                );
                 kafkaTemplate.send(orderProcessedTopic, orderNumber,
-                        Map.of(
-                                "orderNumber" , orderNumber,
-                                "status", "SUCCESS",
-                                "message", "Inventory updated successfully"
-                        ));
+                        orderProducerDto);
 
-                kafkaTemplate.send(inventoryUpdatedTopic, productId,
-                        Map.of(
-                                "productId", productId,
-                                "quantity" , product.getProductQuantity()
-                        ));
+//                kafkaTemplate.send(inventoryUpdatedTopic, productId,
+//                        Map.of(
+//                                "productId", productId,
+//                                "quantity" , product.getProductQuantity()
+//                        ));
             } else {
                 kafkaTemplate.send(orderProcessedTopic, orderNumber,
                         Map.of(
