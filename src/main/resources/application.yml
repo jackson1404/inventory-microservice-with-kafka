@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/micro_kafka_inventory_db
     username: postgres
-    password: root
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -36,6 +36,7 @@ app:
     consumer-groups:
       order-created: order-created-group
       order-processed: order-processed-group
+      inventory-order-created: inventory-order-created-group
       inventory-check: inventory-check-group
       inventory-updated: inventory-update-group
       notification-order-created: notification-order-created-group

@@ -31,19 +31,21 @@ public class InventoryConsumer {
     @Value("${app.kafka.consumer-groups.inventory-check}")
     private String inventoryCheckGroup;
 
-//    @KafkaListener(topics = "stock-status", groupId = "order-service")
-//    public void consume(String messageJson) throws JsonProcessingException {
-//        System.out.println("Received raw message: " + messageJson);
-//
-//        ObjectMapper mapper = new ObjectMapper();
-//        StockStatusEvent event = mapper.readValue(messageJson, StockStatusEvent.class);
-//
-//        if ("OUT_OF_STOCK".equalsIgnoreCase(event.getStatus())) {
-//            System.out.println("🛑 Order Service: Item out of stock -> " + event.getProductName());
-//            // Logic: prevent orders for this item
-//        }
-//    }
+    @Value("${app.topics.order-created}")
+    private String orderCreatedTopic;
 
+    @Value("${app.kafka.consumer-groups.inventory-order-created}")
+    private String inventoryOrderCreatedGroup;
+
+    @KafkaListener(topics = "#{__listener.orderCreatedTopic}", groupId = "#{__listener.inventoryOrderCreatedGroup}")
+    public void consume(String messageJson) throws JsonProcessingException {
+        System.out.println("Received raw message: " + messageJson);
+
+        ObjectMapper mapper = new ObjectMapper();
+        OrderConsumeDto event = mapper.readValue(messageJson, OrderConsumeDto.class);
+
+        System.out.println("Order Service got the order: " + event.getOrderNumber());
+    }
 
     @KafkaListener(topics = "#{__listener.inventoryCheckTopic}", groupId = "#{__listener.inventoryCheckGroup}")
     public void consumeInventoryCheck(String messageJson) throws JsonProcessingException {
