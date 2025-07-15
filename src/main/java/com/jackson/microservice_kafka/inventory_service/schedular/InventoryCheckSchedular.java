@@ -42,6 +42,7 @@ public class InventoryCheckSchedular {
 
     @Scheduled(fixedRate = 10000)
     public void checkStockLevel(){
+
         List<ProductEntity> productEntities = productRepository.findLowStockItems();
         for (ProductEntity item : productEntities) {
             ProductStockDto event = new ProductStockDto(
@@ -49,7 +50,7 @@ public class InventoryCheckSchedular {
             );
             System.out.println("before sent");
 
-            kafkaTemplate.send("stock-status", event);
+            kafkaTemplate.send("stock-status", event.getProductName(), event);
 
             System.out.println("after sent");
         }
